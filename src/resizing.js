@@ -10,6 +10,18 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+//fullscreen
+
+window.addEventListener("dblclick",()=>{
+  if(!document.fullscreenElement){
+    canvas.requestFullscreen();
+    
+  }
+  else{
+    document.exitFullscreen();
+  }
+});
+
 /**
  * Object
  */
@@ -22,8 +34,8 @@ scene.add(mesh);
  * Sizes
  */
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 
 /**
@@ -42,6 +54,18 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+
+//resizing
+
+window.addEventListener('resize', ()=>{
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  camera.aspect =sizes.width/ sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
 /**
  * Renderer
