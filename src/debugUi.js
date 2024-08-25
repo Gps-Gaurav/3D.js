@@ -1,7 +1,19 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import gsap from "gsap";
+import GUI from "lil-gui";
+import { Wireframe } from "three/examples/jsm/Addons.js";
 
+const gui = new GUI({
+  width: 250,
+  title : "DebugUI",
+  closeFolders: false,
+});
+window.addEventListener("keydown",(event)=>{
+  if(event.key=== 'h') gui.show(gui._hidden);
+})
+const guiProps={};
+const scroll = gui.addFolder("Folder");
 /**
  * Base
  */
@@ -15,10 +27,38 @@ const scene = new THREE.Scene();
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
-const material = new THREE.MeshBasicMaterial({ color: "#ff0000" });
+const material = new THREE.MeshBasicMaterial({ color: guiProps.color });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
+material.Wireframe=true;
+
+gui.add(mesh.position,"y").min(-3).max(3).step(0.001).name("positionY");
+
+guiProps.val =12;
+gui.add(guiProps, "val").min(-3).max(3).step(1);
+gui.add(material, "wireframe");
+gui.add(mesh, "visible");
+
+guiProps.color="#ff0000";
+gui.addColor(guiProps,"color").onChange(()=>{
+  material.color.set(guiProps.color);
+});
+guiProps.spin =()=>{
+  gsap.to(mesh.rotation,{
+    delay: 1,
+    y: mesh.rotation.y + Math.PI * 2,
+    duration: 2,
+  })
+};
+gui.add(guiProps,"spin");
+guiProps.segment =2;
+gui.add(guiProps,"segment").onChange(()=>{
+  mesh.geometry.dispose();
+  mesh.geometry = new THREE.MeshBoxGeometry(
+    1,1,1,guiProps.segment,guiProps.segment,guiProps.segment
+  );
+}).min(1).max(20).step(1);
 /**
  * Sizes
  */
