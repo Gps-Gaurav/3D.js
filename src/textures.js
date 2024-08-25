@@ -9,12 +9,53 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+//texture 
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onError =()=>{
+  console.log("error");
+}
+loadingManager.onProgress =()=>{
+  console.log("progrss");
+}
+loadingManager.onLoad =()=>{
+  console.log("load");
+}
+
+
+
+const tectureLoader = new THREE.TextureLoader();
+const color = tectureLoader.load("/textures/img.jpg");
+
+color.colorSpace = THREE.SRGBColorSpace;
+color.repeat.x = 2;
+color.repeat.y = 2;
+color.wrapS = THREE.RepeatWrapping;
+color.wrapT = THREE.RepeatWrapping;
+
+// color.offset.x = -.5
+
+color.rotation = Math.PI/4;
+
+color.center.x = 0.5;
+color.center.y = 0.5;
+
+color.magFilter = THREE.NearestFilter;
+
+// const image = new image();
+// const texture = new THREE.Texture(image);
+// image.addEventListener("load", ()=>{
+// texture.needsUpdate = ture;
+// })
+// Image.src = "texture/img.jpg";
+// console.log(texture);
 
 /**
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+// const geometry = new THREE.SphereGeometry(1, 32, 32);
+// const geometry = new THREE.TorusGeometry(1, 0.35, 32,);
+const material = new THREE.MeshBasicMaterial({ map : color });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
